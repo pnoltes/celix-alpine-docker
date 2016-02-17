@@ -1,0 +1,37 @@
+#
+# Licensed under Apache License v2. See LICENSE for more information.
+#
+#
+# Contributor:
+# Maintainer:
+pkgname=celix
+pkgver=
+pkgrel=0
+pkgdesc=""
+url=""
+arch="all"
+license="ASL 2.0"
+depends=""
+#Note bsd-compat-headers is needed for sys/queue.h, util-linux-dev for the libuuid headers and openjdk8 for the jar command
+depends_dev="curl-dev libuuid util-linux-dev libffi-dev jansson-dev bsd-compat-headers openjdk8"
+makedepends="$depends_dev"
+install=""
+subpackages="$pkgname-dev $pkgname-doc"
+source="celix-src"
+_builddir="$srcdir/build/$pkgname"
+
+prepare() {
+    mkdir "$_builddir"
+}
+
+build() {
+    cd "$_builddir"
+    cmake /root/celix-src -G Ninja -DBUILD_REMOTE_SHELL=OFF -DCMAKE_INSTALL_PREFIX="$pkgdir" -DJAR_COMMAND=usr/lib/jvm/default-jvm/jar ${CELIX_CMAKE_OPTIONS}
+    ninja ${CELIX_NINJA_OPTIONS}
+}
+
+package() {
+    cd "$_builddir"
+    ninja install ${CELIX_NINJA_OPTIONS}
+}
+
